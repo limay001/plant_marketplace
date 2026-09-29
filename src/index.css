@@ -1,0 +1,130 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 152 30% 97%;
+    --foreground: 150 20% 12%;
+    --card: 0 0% 100%;
+    --card-foreground: 150 20% 12%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 150 20% 12%;
+    --primary: 152 71% 30%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 40 100% 62%;
+    --secondary-foreground: 150 20% 12%;
+    --muted: 152 20% 94%;
+    --muted-foreground: 150 10% 40%;
+    --accent: 152 50% 90%;
+    --accent-foreground: 152 71% 25%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 152 15% 88%;
+    --input: 152 15% 86%;
+    --ring: 152 71% 30%;
+    --radius: 1rem;
+    --chart-1: 152 71% 30%;
+    --chart-2: 40 100% 62%;
+    --chart-3: 180 60% 45%;
+    --chart-4: 25 80% 55%;
+    --chart-5: 340 75% 55%;
+  }
+
+  .dark {
+    --background: 150 20% 7%;
+    --foreground: 152 15% 92%;
+    --card: 150 18% 10%;
+    --card-foreground: 152 15% 92%;
+    --popover: 150 18% 10%;
+    --popover-foreground: 152 15% 92%;
+    --primary: 152 60% 45%;
+    --primary-foreground: 150 20% 8%;
+    --secondary: 40 90% 55%;
+    --secondary-foreground: 150 20% 8%;
+    --muted: 150 15% 16%;
+    --muted-foreground: 152 10% 60%;
+    --accent: 150 20% 18%;
+    --accent-foreground: 152 60% 75%;
+    --destructive: 0 70% 50%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 150 15% 20%;
+    --input: 150 15% 22%;
+    --ring: 152 60% 45%;
+    --chart-1: 152 60% 45%;
+    --chart-2: 40 90% 55%;
+    --chart-3: 180 50% 50%;
+    --chart-4: 25 70% 55%;
+    --chart-5: 340 65% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Bricolage Grotesque', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Bricolage Grotesque', system-ui, sans-serif;
+    letter-spacing: -0.02em;
+  }
+}
+
+@layer utilities {
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+@keyframes sway {
+  0%, 100% { transform: rotate(-3deg); }
+  50% { transform: rotate(3deg); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-12px); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.animate-sway {
+  animation: sway 4s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.skeleton-shimmer {
+  background: linear-gradient(90deg, hsl(var(--muted)) 25%, hsl(var(--accent)) 50%, hsl(var(--muted)) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .animate-sway, .animate-float {
+    animation: none !important;
+  }
+}
