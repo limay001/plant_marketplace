@@ -1,4 +1,4 @@
-﻿import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { motion, useInView, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import { Truck, Sparkles, Shield, Leaf, ArrowRight } from 'lucide-react';
 import { products, categories } from '@/data/seed';
@@ -12,7 +12,7 @@ const fadeUp = {
   show: (i = 0) => ({
     opacity: 1,
     y: 0,
-    transition: { duration: 0.5, delay: i * 0.07, ease: [0.25, 0.46, 0.45, 0.94] },
+    transition: { duration: 0.5, delay: i * 0.07, ease: [0.25, 0.46, 0.45, 0.94] as const },
   }),
 };
 
@@ -90,7 +90,7 @@ export function HomePage() {
             <motion.div
               initial={{ opacity: 0, x: -40 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.65, ease: [0.25, 0.46, 0.45, 0.94] }}
+              transition={{ duration: 0.65, ease: [0.25, 0.46, 0.45, 0.94] as const }}
             >
               <motion.div
                 className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary"
@@ -158,7 +158,7 @@ export function HomePage() {
             <motion.div
               initial={{ opacity: 0, scale: 0.92, x: 40 }}
               animate={{ opacity: 1, scale: 1, x: 0 }}
-              transition={{ duration: 0.7, delay: 0.15, ease: [0.25, 0.46, 0.45, 0.94] }}
+              transition={{ duration: 0.7, delay: 0.15, ease: [0.25, 0.46, 0.45, 0.94] as const }}
               className="relative hidden lg:block"
             >
               <div className="relative aspect-square rounded-3xl overflow-hidden bg-gradient-to-br from-primary/10 to-secondary/20">
@@ -290,7 +290,7 @@ export function HomePage() {
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-60px' }}
-          transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
+          transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] as const }}
           className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary to-primary/80 p-8 text-primary-foreground sm:p-12"
         >
           {/* animated bg orbs */}
