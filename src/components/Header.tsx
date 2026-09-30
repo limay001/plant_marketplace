@@ -67,9 +67,14 @@ export function Header({ onOpenCart }: { onOpenCart: () => void }) {
         </button>
 
         <Link to="/" className="flex items-center gap-2 shrink-0">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary">
+          <motion.div
+            className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary"
+            whileHover={{ scale: 1.12, rotate: 8 }}
+            whileTap={{ scale: 0.92 }}
+            transition={{ type: 'spring', stiffness: 400, damping: 15 }}
+          >
             <span className="text-lg">🌿</span>
-          </div>
+          </motion.div>
           <span className="text-xl font-bold tracking-tight">Leafloop</span>
         </Link>
 
@@ -127,13 +132,16 @@ export function Header({ onOpenCart }: { onOpenCart: () => void }) {
             <Sparkles className="h-4 w-4" />
             Ask Leafy
           </Button>
-          <button
+          <motion.button
             onClick={toggleTheme}
             className="flex h-9 w-9 items-center justify-center rounded-full hover:bg-accent transition-colors"
             aria-label="Toggle theme"
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.88, rotate: 20 }}
+            transition={{ type: 'spring', stiffness: 400, damping: 15 }}
           >
             {theme === 'light' ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
-          </button>
+          </motion.button>
           <Link
             to="/wishlist"
             className="relative flex h-9 w-9 items-center justify-center rounded-full hover:bg-accent transition-colors"

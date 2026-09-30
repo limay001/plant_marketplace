@@ -1,7 +1,7 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Heart, ShoppingCart, Zap, Star, Truck, Shield, Check, Droplets, Sun, Wind, MapPin } from 'lucide-react';
+import { Heart, ShoppingCart, Zap, Star, Truck, Shield, Check, Droplets, Sun, Wind, MapPin, Thermometer, Home, CheckCircle2, XCircle, AirVent } from 'lucide-react';
 import { getProductById, getReviewsByProductId, products } from '@/data/seed';
 import { useApp } from '@/context/AppContext';
 import { formatINR, calculateDiscount } from '@/lib/format';
@@ -71,6 +71,14 @@ export function ProductDetailPage() {
     navigate('/cart');
   };
 
+  const difficultyColor = (d?: string) => {
+    if (!d) return 'bg-muted text-muted-foreground border-border';
+    if (d === 'Very Easy') return 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/30 dark:text-emerald-400 dark:border-emerald-900/40';
+    if (d === 'Easy') return 'bg-green-50 text-green-700 border-green-200 dark:bg-green-950/30 dark:text-green-400 dark:border-green-900/40';
+    if (d === 'Moderate') return 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/30 dark:text-amber-400 dark:border-amber-900/40';
+    return 'bg-orange-50 text-orange-700 border-orange-200 dark:bg-orange-950/30 dark:text-orange-400 dark:border-orange-900/40';
+  };
+
   return (
     <div className="mx-auto max-w-7xl px-4 py-6 lg:px-6">
       {/* Breadcrumb */}
@@ -79,7 +87,7 @@ export function ProductDetailPage() {
         <span>/</span>
         <Link to={`/listing?category=${encodeURIComponent(product.category)}`} className="hover:text-primary">{product.category}</Link>
         <span>/</span>
-        <span className="text-foreground font-medium">{product.name}</span>
+        <span className="text-foreground font-medium line-clamp-1">{product.name}</span>
       </nav>
 
       <div className="grid gap-6 lg:grid-cols-2">
@@ -132,14 +140,19 @@ export function ProductDetailPage() {
           <p className="text-sm text-muted-foreground">{product.category}</p>
           <h1 className="mt-1 text-2xl font-bold sm:text-3xl">{product.name}</h1>
 
-          <div className="mt-2 flex items-center gap-3">
+          <div className="mt-2 flex flex-wrap items-center gap-2">
             <div className="flex items-center gap-1 rounded-lg bg-primary/10 px-2 py-1">
               <Star className="h-4 w-4 fill-primary text-primary" />
               <span className="text-sm font-bold text-primary">{product.rating}</span>
             </div>
             <span className="text-sm text-muted-foreground">{product.reviewCount} reviews</span>
-            {product.petSafe && <Badge variant="secondary" className="bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400">Pet Safe</Badge>}
-            {product.beginner && <Badge variant="secondary" className="bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400">Beginner Friendly</Badge>}
+            {product.petSafe && <Badge variant="secondary" className="bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400">🐾 Pet Safe</Badge>}
+            {product.beginner && <Badge variant="secondary" className="bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400">🌱 Beginner</Badge>}
+            {product.careGuide.difficulty && (
+              <Badge variant="secondary" className={cn(difficultyColor(product.careGuide.difficulty))}>
+                {product.careGuide.difficulty}
+              </Badge>
+            )}
           </div>
 
           <div className="mt-4 flex items-baseline gap-3">
@@ -154,6 +167,25 @@ export function ProductDetailPage() {
           <p className="mt-1 text-xs text-muted-foreground">Inclusive of all taxes</p>
 
           <p className="mt-4 text-sm leading-relaxed text-muted-foreground">{product.description}</p>
+
+          {/* Quick care snapshot */}
+          <div className="mt-4 grid grid-cols-3 gap-2">
+            <div className="rounded-xl border border-border/50 bg-card p-2.5 text-center">
+              <Droplets className="mx-auto h-4 w-4 text-blue-500" />
+              <p className="mt-1 text-[10px] font-semibold text-muted-foreground uppercase tracking-wide">Water</p>
+              <p className="text-xs font-medium leading-tight mt-0.5">{product.careGuide.water}</p>
+            </div>
+            <div className="rounded-xl border border-border/50 bg-card p-2.5 text-center">
+              <Sun className="mx-auto h-4 w-4 text-amber-500" />
+              <p className="mt-1 text-[10px] font-semibold text-muted-foreground uppercase tracking-wide">Light</p>
+              <p className="text-xs font-medium leading-tight mt-0.5">{product.careGuide.light}</p>
+            </div>
+            <div className="rounded-xl border border-border/50 bg-card p-2.5 text-center">
+              <Wind className="mx-auto h-4 w-4 text-cyan-500" />
+              <p className="mt-1 text-[10px] font-semibold text-muted-foreground uppercase tracking-wide">Humidity</p>
+              <p className="text-xs font-medium leading-tight mt-0.5">{product.careGuide.humidity}</p>
+            </div>
+          </div>
 
           {/* Pincode check */}
           <div className="mt-5 rounded-2xl border border-border/50 bg-card p-4">
@@ -178,7 +210,7 @@ export function ProductDetailPage() {
               {pincodeStatus === 'available' && (
                 <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} className="mt-2 flex items-center gap-1.5 text-sm text-primary">
                   <Check className="h-4 w-4" />
-                  Delivery available! Order now for delivery in 5–7 days.
+                  Delivery available! Order now for delivery in 5-7 days.
                 </motion.div>
               )}
               {pincodeStatus === 'unavailable' && (
@@ -206,7 +238,7 @@ export function ProductDetailPage() {
             <div className="rounded-xl border border-border/50 bg-card p-3">
               <Truck className="mx-auto h-5 w-5 text-primary" />
               <p className="mt-1 text-xs font-medium">Free delivery</p>
-              <p className="text-[10px] text-muted-foreground">over ₹499</p>
+              <p className="text-[10px] text-muted-foreground">over Rs.499</p>
             </div>
             <div className="rounded-xl border border-border/50 bg-card p-3">
               <Shield className="mx-auto h-5 w-5 text-primary" />
@@ -241,9 +273,94 @@ export function ProductDetailPage() {
 
         <AnimatePresence mode="wait">
           {activeTab === 'description' && (
-            <motion.div key="description" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="py-6">
-              <p className="text-sm leading-relaxed text-muted-foreground max-w-2xl">{product.description}</p>
-              <div className="mt-4 flex flex-wrap gap-2">
+            <motion.div key="description" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="py-6 max-w-3xl">
+              <p className="text-sm leading-relaxed text-muted-foreground">{product.description}</p>
+
+              {/* Product highlights grid */}
+              <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
+                <div className="rounded-xl border border-border/50 bg-card p-3 text-center">
+                  <span className="text-2xl">{product.light === 'Low' ? '🌑' : product.light === 'Medium' ? '🌤️' : '☀️'}</span>
+                  <p className="mt-1 text-[10px] font-semibold text-muted-foreground uppercase tracking-wide">Light Need</p>
+                  <p className="text-xs font-semibold mt-0.5">{product.light}</p>
+                </div>
+                <div className="rounded-xl border border-border/50 bg-card p-3 text-center">
+                  <span className="text-2xl">{product.size === 'Small' ? '🪴' : product.size === 'Medium' ? '🌿' : '🌳'}</span>
+                  <p className="mt-1 text-[10px] font-semibold text-muted-foreground uppercase tracking-wide">Plant Size</p>
+                  <p className="text-xs font-semibold mt-0.5">{product.size}</p>
+                </div>
+                <div className="rounded-xl border border-border/50 bg-card p-3 text-center">
+                  <span className="text-2xl">{product.petSafe ? '🐾' : '⚠️'}</span>
+                  <p className="mt-1 text-[10px] font-semibold text-muted-foreground uppercase tracking-wide">Pet Safety</p>
+                  <p className="text-xs font-semibold mt-0.5">{product.petSafe ? 'Safe' : 'Keep Away'}</p>
+                </div>
+                <div className="rounded-xl border border-border/50 bg-card p-3 text-center">
+                  <span className="text-2xl">{product.beginner ? '👶' : '🌿'}</span>
+                  <p className="mt-1 text-[10px] font-semibold text-muted-foreground uppercase tracking-wide">Experience</p>
+                  <p className="text-xs font-semibold mt-0.5">{product.beginner ? 'Beginner' : 'Enthusiast'}</p>
+                </div>
+              </div>
+
+              {/* Ideal placement */}
+              {product.careGuide.idealPlacement && product.careGuide.idealPlacement.length > 0 && (
+                <div className="mt-6">
+                  <h3 className="text-sm font-bold flex items-center gap-2 mb-3">
+                    <Home className="h-4 w-4 text-primary" />
+                    Ideal Placement
+                  </h3>
+                  <div className="flex flex-wrap gap-2">
+                    {product.careGuide.idealPlacement.map((place) => (
+                      <span key={place} className="rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-xs font-medium text-primary">
+                        📍 {place}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Ideal environment */}
+              {product.careGuide.idealEnvironment && (
+                <div className="mt-4 rounded-xl border border-border/50 bg-card p-3">
+                  <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide mb-1">Best Environment</p>
+                  <p className="text-sm text-foreground">{product.careGuide.idealEnvironment}</p>
+                </div>
+              )}
+
+              {/* Suitability */}
+              {product.careGuide.suitability && (
+                <div className="mt-6 grid gap-3 sm:grid-cols-2">
+                  <div className="rounded-2xl border border-green-200 bg-green-50 p-4 dark:border-green-900/40 dark:bg-green-950/20">
+                    <h4 className="flex items-center gap-1.5 text-sm font-bold text-green-700 dark:text-green-400 mb-2">
+                      <CheckCircle2 className="h-4 w-4" />
+                      Good For
+                    </h4>
+                    <ul className="space-y-1.5">
+                      {product.careGuide.suitability.goodFor.map((item, i) => (
+                        <li key={i} className="flex items-start gap-1.5 text-xs text-green-700 dark:text-green-400">
+                          <span className="mt-0.5 shrink-0">✓</span>
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div className="rounded-2xl border border-red-200 bg-red-50 p-4 dark:border-red-900/40 dark:bg-red-950/20">
+                    <h4 className="flex items-center gap-1.5 text-sm font-bold text-red-700 dark:text-red-400 mb-2">
+                      <XCircle className="h-4 w-4" />
+                      Not Good For
+                    </h4>
+                    <ul className="space-y-1.5">
+                      {product.careGuide.suitability.notGoodFor.map((item, i) => (
+                        <li key={i} className="flex items-start gap-1.5 text-xs text-red-700 dark:text-red-400">
+                          <span className="mt-0.5 shrink-0">✗</span>
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              )}
+
+              {/* Tags */}
+              <div className="mt-6 flex flex-wrap gap-2">
                 {product.tags.map((tag) => (
                   <Badge key={tag} variant="outline" className="capitalize">{tag.replace(/-/g, ' ')}</Badge>
                 ))}
@@ -252,24 +369,115 @@ export function ProductDetailPage() {
           )}
 
           {activeTab === 'care' && (
-            <motion.div key="care" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="py-6">
-              <div className="grid gap-4 sm:grid-cols-3 max-w-2xl">
+            <motion.div key="care" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="py-6 max-w-3xl">
+              {/* Difficulty + AC safe */}
+              <div className="mb-5 flex flex-wrap gap-3">
+                {product.careGuide.difficulty && (
+                  <div className={cn('rounded-xl border px-4 py-2 text-sm font-semibold', difficultyColor(product.careGuide.difficulty))}>
+                    Care Level: {product.careGuide.difficulty}
+                  </div>
+                )}
+                {product.careGuide.airConditionedSafe !== undefined && (
+                  <div className={cn(
+                    'flex items-center gap-1.5 rounded-xl border px-4 py-2 text-sm font-semibold',
+                    product.careGuide.airConditionedSafe
+                      ? 'border-sky-200 bg-sky-50 text-sky-700 dark:border-sky-900/40 dark:bg-sky-950/20 dark:text-sky-400'
+                      : 'border-orange-200 bg-orange-50 text-orange-700 dark:border-orange-900/40 dark:bg-orange-950/20 dark:text-orange-400'
+                  )}>
+                    <AirVent className="h-4 w-4" />
+                    {product.careGuide.airConditionedSafe ? 'AC Room Friendly' : 'Avoid Direct AC Draft'}
+                  </div>
+                )}
+              </div>
+
+              <div className="grid gap-4 sm:grid-cols-3">
+                {/* Water */}
                 <div className="rounded-2xl border border-border/50 bg-card p-4">
                   <Droplets className="h-6 w-6 text-blue-500" />
                   <h4 className="mt-2 font-semibold">Water</h4>
-                  <p className="mt-1 text-sm text-muted-foreground">{product.careGuide.water}</p>
+                  <p className="mt-1 text-sm text-primary font-medium">{product.careGuide.water}</p>
+                  {product.careGuide.waterQuantity && (
+                    <p className="mt-1 text-xs text-muted-foreground">💧 {product.careGuide.waterQuantity}</p>
+                  )}
+                  {product.careGuide.waterSchedule && (
+                    <p className="mt-2 text-xs leading-relaxed text-muted-foreground border-t border-border/50 pt-2">{product.careGuide.waterSchedule}</p>
+                  )}
                 </div>
+
+                {/* Light */}
                 <div className="rounded-2xl border border-border/50 bg-card p-4">
                   <Sun className="h-6 w-6 text-amber-500" />
                   <h4 className="mt-2 font-semibold">Light</h4>
-                  <p className="mt-1 text-sm text-muted-foreground">{product.careGuide.light}</p>
+                  <p className="mt-1 text-sm text-primary font-medium">{product.careGuide.light}</p>
+                  {product.careGuide.lightDetail && (
+                    <p className="mt-2 text-xs leading-relaxed text-muted-foreground border-t border-border/50 pt-2">{product.careGuide.lightDetail}</p>
+                  )}
                 </div>
+
+                {/* Humidity and Temperature */}
                 <div className="rounded-2xl border border-border/50 bg-card p-4">
                   <Wind className="h-6 w-6 text-cyan-500" />
                   <h4 className="mt-2 font-semibold">Humidity</h4>
-                  <p className="mt-1 text-sm text-muted-foreground">{product.careGuide.humidity}</p>
+                  <p className="mt-1 text-sm text-primary font-medium">{product.careGuide.humidity}</p>
+                  {product.careGuide.temperature && (
+                    <div className="mt-2 flex items-center gap-1.5 border-t border-border/50 pt-2">
+                      <Thermometer className="h-3.5 w-3.5 text-rose-400" />
+                      <p className="text-xs text-muted-foreground">{product.careGuide.temperature}</p>
+                    </div>
+                  )}
                 </div>
               </div>
+
+              {/* Ideal spots */}
+              {product.careGuide.idealPlacement && product.careGuide.idealPlacement.length > 0 && (
+                <div className="mt-6">
+                  <h3 className="text-sm font-bold flex items-center gap-2 mb-3">
+                    <Home className="h-4 w-4 text-primary" />
+                    Ideal Spots
+                  </h3>
+                  <div className="flex flex-wrap gap-2">
+                    {product.careGuide.idealPlacement.map((place) => (
+                      <span key={place} className="rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-xs font-medium text-primary">
+                        📍 {place}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Suitability */}
+              {product.careGuide.suitability && (
+                <div className="mt-6 grid gap-3 sm:grid-cols-2">
+                  <div className="rounded-2xl border border-green-200 bg-green-50 p-4 dark:border-green-900/40 dark:bg-green-950/20">
+                    <h4 className="flex items-center gap-1.5 text-sm font-bold text-green-700 dark:text-green-400 mb-2">
+                      <CheckCircle2 className="h-4 w-4" />
+                      Good For
+                    </h4>
+                    <ul className="space-y-1.5">
+                      {product.careGuide.suitability.goodFor.map((item, i) => (
+                        <li key={i} className="flex items-start gap-1.5 text-xs text-green-700 dark:text-green-400">
+                          <span className="mt-0.5 shrink-0">✓</span>
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div className="rounded-2xl border border-red-200 bg-red-50 p-4 dark:border-red-900/40 dark:bg-red-950/20">
+                    <h4 className="flex items-center gap-1.5 text-sm font-bold text-red-700 dark:text-red-400 mb-2">
+                      <XCircle className="h-4 w-4" />
+                      Not Good For
+                    </h4>
+                    <ul className="space-y-1.5">
+                      {product.careGuide.suitability.notGoodFor.map((item, i) => (
+                        <li key={i} className="flex items-start gap-1.5 text-xs text-red-700 dark:text-red-400">
+                          <span className="mt-0.5 shrink-0">✗</span>
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              )}
             </motion.div>
           )}
 
@@ -301,7 +509,7 @@ export function ProductDetailPage() {
               </div>
 
               <div className="space-y-4">
-                {reviews.map((review) => (
+                {reviews.length > 0 ? reviews.map((review) => (
                   <div key={review.id} className="rounded-2xl border border-border/50 bg-card p-4">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
@@ -321,7 +529,9 @@ export function ProductDetailPage() {
                     </div>
                     <p className="mt-2 text-sm text-muted-foreground">{review.comment}</p>
                   </div>
-                ))}
+                )) : (
+                  <p className="text-sm text-muted-foreground py-8 text-center">No reviews yet. Be the first to review this plant!</p>
+                )}
               </div>
             </motion.div>
           )}

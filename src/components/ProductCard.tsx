@@ -23,10 +23,12 @@ export function ProductCard({ product, index = 0, className }: ProductCardProps)
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, delay: Math.min(index * 0.05, 0.4) }}
+      whileHover={{ y: -4 }}
+      whileTap={{ scale: 0.98 }}
       className={cn('group relative', className)}
     >
       <Link to={`/product/${product.id}`} className="block">
-        <div className="relative overflow-hidden rounded-2xl bg-card border border-border/50 shadow-sm transition-all duration-300 group-hover:shadow-lg group-hover:-translate-y-1">
+        <div className="relative overflow-hidden rounded-2xl bg-card border border-border/50 shadow-sm transition-all duration-300 group-hover:shadow-xl group-hover:border-primary/30">
           <div className="relative aspect-square overflow-hidden bg-muted">
             <img
               src={product.images[0]}
@@ -61,11 +63,20 @@ export function ProductCard({ product, index = 0, className }: ProductCardProps)
             <h3 className="mt-0.5 line-clamp-2 text-sm font-semibold leading-tight">
               {product.name}
             </h3>
-            <div className="mt-1 flex items-center gap-1">
+            <div className="mt-1 flex items-center gap-1 flex-wrap">
               <span className="flex items-center gap-0.5 rounded bg-primary/10 px-1.5 py-0.5 text-xs font-bold text-primary">
                 {product.rating} ★
               </span>
               <span className="text-xs text-muted-foreground">({product.reviewCount})</span>
+              {product.petSafe && <span className="text-xs" title="Pet Safe">🐾</span>}
+            </div>
+            <div className="mt-1.5 flex items-center gap-1 flex-wrap">
+              <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium text-muted-foreground">
+                {product.light === 'Low' ? '🌑' : product.light === 'Medium' ? '🌤️' : '☀️'} {product.light}
+              </span>
+              <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium text-muted-foreground">
+                {product.size}
+              </span>
             </div>
             <div className="mt-2 flex items-baseline gap-1.5">
               <span className="text-base font-bold">{formatINR(product.price)}</span>
@@ -78,7 +89,7 @@ export function ProductCard({ product, index = 0, className }: ProductCardProps)
           </div>
         </div>
       </Link>
-      <button
+      <motion.button
         onClick={() => {
           addToCart({
             productId: product.id,
@@ -90,11 +101,15 @@ export function ProductCard({ product, index = 0, className }: ProductCardProps)
           });
           toast.success(`${product.name} added to cart`);
         }}
-        className="absolute bottom-3 right-3 flex h-9 w-9 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-all hover:scale-110 active:scale-95 opacity-0 group-hover:opacity-100 focus:opacity-100"
+        initial={{ scale: 0.7, opacity: 0 }}
+        whileHover={{ scale: 1.15 }}
+        whileTap={{ scale: 0.9 }}
+        animate={{ scale: 1 }}
+        className="absolute bottom-3 right-3 flex h-9 w-9 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg opacity-0 group-hover:opacity-100 focus:opacity-100"
         aria-label="Add to cart"
       >
         <ShoppingCart className="h-4 w-4" />
-      </button>
+      </motion.button>
     </motion.div>
   );
 }

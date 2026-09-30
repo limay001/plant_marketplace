@@ -35,8 +35,20 @@ export interface Product {
   reviewCount: number;
   careGuide: {
     water: string;
+    waterQuantity?: string;
+    waterSchedule?: string;
     light: string;
+    lightDetail?: string;
     humidity: string;
+    temperature?: string;
+    idealEnvironment?: string;
+    idealPlacement?: string[];
+    difficulty?: string;
+    airConditionedSafe?: boolean;
+    suitability?: {
+      goodFor: string[];
+      notGoodFor: string[];
+    };
   };
   sellerId: string;
   tags: string[];
